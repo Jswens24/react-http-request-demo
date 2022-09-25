@@ -1,24 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import MoviesList from './components/MoviesList';
 import './App.css';
+import AddMovie from './components/AddMovie';
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function fetchMoviesHandler() {
+
+  const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
     const response = await fetch('https://swapi.dev/api/films')
     const data = await response.json();
     setMovies(data.results);
     setIsLoading(false);
+  }, [])
+
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, []);
+
+  const addMovieHandler = () => {
+    console.log(movies);
   }
 
   return (
     <React.Fragment>
       <section>
-        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
+        <AddMovie onAddMovie={addMovieHandler} />
       </section>
       <section>
         {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
